@@ -1,21 +1,23 @@
+module Rubik where
+
 data Orientation = F | B | L | R | T | D deriving (Show, Eq)
 -- Initial and current orientation
-data Face = Face Orientation Orientation deriving Show
+data Face = Face Orientation Orientation deriving (Show, Eq)
 class Facefull a where
   faces :: a -> [Face]
   faceMap :: (Face -> Face) -> a -> a
 
-data Edge = Edge Face Face deriving Show
+data Edge = Edge Face Face deriving (Show, Eq)
 instance Facefull Edge where
   faces (Edge f1 f2) = [f1, f2]
   faceMap f (Edge f1 f2) = Edge (f f1) (f f2)
 
-data Corner = Corner Face Face Face deriving Show
+data Corner = Corner Face Face Face deriving (Show, Eq)
 instance Facefull Corner where
   faces (Corner f1 f2 f3) = [f1, f2, f3]
   faceMap f (Corner f1 f2 f3) = Corner (f f1) (f f2) (f f3)
 
-data Cube = Cube [Edge] [Corner] deriving Show
+data Cube = Cube [Edge] [Corner] deriving (Show, Eq)
 instance Facefull Cube where
   faces (Cube edges corners) = (edges >>= faces) ++ (corners >>= faces)
   faceMap f (Cube edges corners) = Cube (faceMap f <$> edges) (faceMap f <$> corners)
@@ -86,6 +88,10 @@ rotate r f (Cube edges corners) = Cube (rotateFaces <$> edges) (rotateFaces <$> 
       | any (facing r) (faces block) = faceMap (rotateFace (f r)) block
       | otherwise = block
 
+rotateN :: Int -> Orientation -> (Orientation -> Orientation -> Orientation) -> Cube -> Cube
+rotateN 0 r f cube = cube
+rotateN n r f cube = rotateN (n - 1) r f (rotate r f cube)
+
 parse :: Char -> Orientation
 parse 'R' = R
 parse 'L' = L
@@ -99,15 +105,3 @@ executeAlg [] cube         = cube
 executeAlg [c] cube        = rotate (parse c) clockwise cube
 executeAlg (c:'\'':t) cube = executeAlg t $ rotate (parse c) anticlockwise cube
 executeAlg (c:t) cube      = executeAlg t $ rotate (parse c) clockwise cube
-
-main :: IO ()
-main = do
-  print (solved starter)
-  -- print (solved (rotateRight starter))
-  print (solved (executeAlg "R" starter))
-  print (solved (executeAlg "RR" starter))
-  print (solved (executeAlg "RRR" starter))
-  print (solved (executeAlg "RRRR" starter)) -- back to solved
-  print (solved (executeAlg "RTR'T'" starter))
-  print (solved (executeAlg (take (6 * 6) (cycle "RTR'T'")) starter)) -- 6 times sexy move
-  print (solved (executeAlg (take (2 * 23) (cycle "RTR'F'RTR'T'R'FRRT'R'T'")) starter)) -- 2x jperm
