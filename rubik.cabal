@@ -29,7 +29,7 @@ executable rubik
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.14.2.0, rubik
+    build-depends:    base ^>=4.14.2.0, rubik, random
     hs-source-dirs:   app
     default-language: Haskell2010
 

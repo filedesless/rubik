@@ -1,6 +1,6 @@
 module Rubik where
 
-data Orientation = F | B | L | R | T | D deriving (Show, Eq)
+data Orientation = F | B | L | R | T | D deriving (Show, Eq, Enum, Bounded)
 -- Initial and current orientation
 data Face = Face Orientation Orientation deriving (Show, Eq)
 class Facefull a where
