@@ -89,7 +89,7 @@ rotate r f (Cube edges corners) = Cube (rotateFaces <$> edges) (rotateFaces <$> 
       | otherwise = block
 
 rotateN :: Int -> Orientation -> (Orientation -> Orientation -> Orientation) -> Cube -> Cube
-rotateN 0 r f cube = cube
+rotateN 0 _ _ cube = cube
 rotateN n r f cube = rotateN (n - 1) r f (rotate r f cube)
 
 parse :: Char -> Orientation
@@ -105,3 +105,7 @@ executeAlg [] cube         = cube
 executeAlg [c] cube        = rotate (parse c) clockwise cube
 executeAlg (c:'\'':t) cube = executeAlg t $ rotate (parse c) anticlockwise cube
 executeAlg (c:t) cube      = executeAlg t $ rotate (parse c) clockwise cube
+
+executeAlgN :: Int -> String -> Cube -> Cube
+executeAlgN 0 _ cube = cube
+executeAlgN n s cube = executeAlgN (n - 1) s (executeAlg s cube)

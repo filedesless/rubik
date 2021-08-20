@@ -9,4 +9,4 @@ rubik playground
     
 ## test
 
-    cabal test
+    cabal test --show-details=streaming
