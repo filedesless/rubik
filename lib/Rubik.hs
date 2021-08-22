@@ -1,4 +1,5 @@
 module Rubik where
+-- resource: https://web.mit.edu/sp.268/www/rubik.pdf
 
 data Orientation = F | B | L | R | T | D deriving (Show, Eq, Enum, Bounded)
 -- Initial and current orientation
@@ -109,3 +110,9 @@ executeAlg (c:t) cube      = executeAlg t $ rotate (parse c) clockwise cube
 executeAlgN :: Int -> String -> Cube -> Cube
 executeAlgN 0 _ cube = cube
 executeAlgN n s cube = executeAlgN (n - 1) s (executeAlg s cube)
+
+-- every alg has a cycle, given enough repetition the cube comes back to it's initial state
+countBeforeCycle :: String -> Int
+countBeforeCycle alg = go 1 starter
+  where go n cube = let cube' = executeAlg alg cube in
+          if solved cube' then n else go (n + 1) cube'

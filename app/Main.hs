@@ -23,3 +23,4 @@ main = do
   let alg = intercalate "" $ display <$> moves
   putStrLn $ "Here's a random shuffle: " ++ alg
   print $ executeAlg alg starter
+  putStrLn $ "A solution would be to repeat the alg " ++ show (countBeforeCycle alg) ++ " times"
